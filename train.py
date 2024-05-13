@@ -290,7 +290,7 @@ if __name__ == '__main__':
         os.makedirs(args.output_dir, exist_ok=True)
         print(f"Output directory created: \"{args.output_dir}\"")
 
-
+    train(args)
 
 
 

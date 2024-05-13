@@ -8,7 +8,7 @@ import datetime
 import random
 from PIL import Image
 import matplotlib.pyplot as plt
-
+import argparse
 def generator(z, output_channel_dim, training, args):
     with tf.variable_scope("generator", reuse=not training):
         # 8x8x1024

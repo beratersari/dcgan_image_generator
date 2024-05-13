@@ -105,7 +105,16 @@ if __name__ == '__main__':
     parser.add_argument('--sample_dir', default='./saved_samples/', help='path to saved images')
     opt = parser.parse_args()
 
-    data = np.load(opt.sample_dir)
+    images = []
+    for filename in os.listdir(opt.sample_dir):
+        if filename.endswith('.jpg') or filename.endswith('.png'):
+            image_path = os.path.join(opt.sample_dir, filename)
+            image = Image.open(image_path).convert('RGB')
+            image = np.array(image)
+            images.append(image)
+
+    # Convert the list of images to numpy array
+    data = np.array(images)
     data = np.clip(data, 0, 255)
     m, s = get_inception_score(data, splits=1)
 

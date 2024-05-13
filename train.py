@@ -235,6 +235,17 @@ def summarize_epoch(epoch, duration, sess, d_losses, g_losses, input_z, data_sha
           "\nDuration: {:.5f}".format(duration),
           "\nD Loss: {:.5f}".format(np.mean(d_losses[-minibatch_size:])),
           "\nG Loss: {:.5f}".format(np.mean(g_losses[-minibatch_size:])))
+def test(sess, input_z, out_channel_dim, epoch, number_of_images, args):
+    counter =0
+    example_z = np.random.uniform(-1, 1, size=[number_of_images, input_z.get_shape().as_list()[-1]])
+    samples = sess.run(generator(input_z, out_channel_dim, False, args), feed_dict={input_z: example_z})
+    sample_images = [((sample + 1.0) * 127.5).astype(np.uint8) for sample in samples]
+    for index, image in enumerate(sample_images):
+        image_array = sample_images[index]
+        image = Image.fromarray(image_array)
+        name= str(counter).zfill(3)
+        image.save( os.path.join(args.output_dir, "sample_"+name+  ".jpg"))
+        counter+=1
 def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
     input_images, input_z, lr_G, lr_D = model_inputs(data_shape[1:], args.noise_size)
     d_loss, g_loss = model_loss(input_images, input_z, data_shape[3],args)
@@ -260,8 +271,8 @@ def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
                 g_losses.append(g_loss.eval({input_z: batch_z}))
 
             summarize_epoch(epoch, time.time()-start_time, sess, d_losses, g_losses, input_z, data_shape,args)
-        #save model
-        saver.save(sess, "model.ckpt")
+        test(sess,input_z,args.n_channel,args.epochs,args.n_images2generate,args)
+
 def train(args):
     # Load images and resize
     input_images = np.asarray(
@@ -284,6 +295,7 @@ if __name__ == '__main__':
     parser.add_argument('--epsilon', type=float, default=0.00005, help='Epsilon')
     parser.add_argument('--output_dir', type=str, default='outputs', help='Output directory')
     parser.add_argument('--n_channel', type=int, default=3, help='Number of channels')
+    parser.add_argument('--n_images2generate', type=int, default=50000, help='Number of images to generate')
     args = parser.parse_args()
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir, exist_ok=True)

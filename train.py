@@ -1,14 +1,13 @@
-import argparse
 import os
 import time
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 from glob import glob
 import datetime
 import random
 from PIL import Image
 import matplotlib.pyplot as plt
-import glob
 
 def generator(z, output_channel_dim, training, args):
     with tf.variable_scope("generator", reuse=not training):

@@ -116,6 +116,7 @@ if __name__ == '__main__':
 
     # Convert the list of images to numpy array
     data = np.array(images)
+    data = np.transpose(data, (0, 3, 1, 2))
     data = np.clip(data, 0, 255)
     m, s = get_inception_score(data, splits=1)
 

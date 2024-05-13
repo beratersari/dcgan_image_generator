@@ -9,6 +9,7 @@ import random
 from PIL import Image
 import matplotlib.pyplot as plt
 from train import model_inputs,generator
+import argparse
 
 def test(sess, input_z, out_channel_dim, epoch, number_of_images, args):
     counter =0

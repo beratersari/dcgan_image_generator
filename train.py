@@ -120,7 +120,7 @@ def discriminator(x, args,reuse):
                                  name='conv2')
         batch_norm2 = tf.layers.batch_normalization(conv2,
                                                     training=True,
-                                                    epsilon=EPSILON,
+                                                    epsilon=args.epsilon,
                                                     name='batch_norm2')
         conv2_out = tf.nn.leaky_relu(batch_norm2,
                                      name="conv2_out")

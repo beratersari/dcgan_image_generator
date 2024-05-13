@@ -33,6 +33,7 @@ import numpy as np
 import time
 from tensorflow.python.ops import array_ops
 # pip install tensorflow-gan
+from PIL import Image
 import tensorflow_gan as tfgan
 
 session = tf.compat.v1.InteractiveSession()

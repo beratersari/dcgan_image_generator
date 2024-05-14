@@ -235,9 +235,10 @@ def summarize_epoch(epoch, duration, sess, d_losses, g_losses, input_z, data_sha
           "\nDuration: {:.5f}".format(duration),
           "\nD Loss: {:.5f}".format(np.mean(d_losses[-minibatch_size:])),
           "\nG Loss: {:.5f}".format(np.mean(g_losses[-minibatch_size:])))
-def test(sess, input_z, out_channel_dim, epoch, number_of_images, args):
-    counter =0
+def test(sess, input_z, out_channel_dim, start , number_of_images, args):
+    counter =start
     example_z = np.random.uniform(-1, 1, size=[number_of_images, input_z.get_shape().as_list()[-1]])
+    print("here1")
     samples = sess.run(generator(input_z, out_channel_dim, False, args), feed_dict={input_z: example_z})
     sample_images = [((sample + 1.0) * 127.5).astype(np.uint8) for sample in samples]
     for index, image in enumerate(sample_images):
@@ -271,7 +272,18 @@ def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
                 g_losses.append(g_loss.eval({input_z: batch_z}))
 
             summarize_epoch(epoch, time.time()-start_time, sess, d_losses, g_losses, input_z, data_shape,args)
-        test(sess,input_z,args.n_channel,args.epochs,args.n_images2generate,args)
+        
+        model_save_path = "model.h5"  # Change the path as needed
+        #tf.keras.models.save_model(sess, model_save_path)
+        counter = 0
+        n = args.n_images2generate
+        batch_count = 500
+        while counter < n:
+          test(sess,input_z,data_shape[3],counter,batch_count,args)
+          counter+=batch_count
+        if(counter-batch_count<n):
+          test(sess,input_z,data_shape[3],int(n-(counter-batch_count)),int(counter-batch_count),args)
+
 
 def train(args):
     # Load images and resize

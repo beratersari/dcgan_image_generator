@@ -279,10 +279,13 @@ def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
         n = args.n_images2generate
         batch_count = 500
         while counter < n:
-          test(sess,input_z,data_shape[3],counter,batch_count,args)
-          counter+=batch_count
-        if(counter-batch_count<n):
-          test(sess,input_z,data_shape[3],int(n-(counter-batch_count)),int(counter-batch_count),args)
+          
+          if(n-counter>=batch_count):
+            test(sess,input_z,data_shape[3],counter,batch_count,args)
+            counter+=batch_count
+          else:
+            test(sess,input_z,data_shape[3],counter,n-counter,args)
+            counter+=n-counter
 
 
 def train(args):

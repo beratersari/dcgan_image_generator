@@ -247,6 +247,17 @@ def test(sess, input_z, out_channel_dim, start , number_of_images, args):
         name= str(counter).zfill(3)
         image.save( os.path.join(args.output_dir, "sample_"+name+  ".jpg"))
         counter+=1
+# Get the number of parameters
+def count_parameters():
+    total_params = 0
+    for variable in tf.trainable_variables():
+        shape = variable.get_shape()
+        variable_params = 1
+        for dim in shape:
+            variable_params *= dim.value
+        total_params += variable_params
+    return total_params
+    
 def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
     input_images, input_z, lr_G, lr_D = model_inputs(data_shape[1:], args.noise_size)
     d_loss, g_loss = model_loss(input_images, input_z, data_shape[3],args)
@@ -254,6 +265,8 @@ def train_helper(get_batches, data_shape, args, checkpoint_to_load=None):
     saver = tf.train.Saver()
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
+        total_params = count_parameters()
+        print("Number of parameters: ", total_params)
         epoch = 0
         iteration = 0
         d_losses = []
